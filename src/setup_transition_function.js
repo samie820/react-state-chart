@@ -49,8 +49,8 @@ const statechart_transition_graph = {
     }
   },
   searching: {
-    AJAX_RESPONSE_SUCCESS: "searched.success", // promise callback: ajaxTaskDone( errorObj )
-    AJAX_RESPONSE_ERROR: "searched.error", // promise callback: ajaxTaskDone( errorObj )
+    AJAX_RESPONSE_SUCCESS: "searched.success", // promise callback: asyncTaskDone( errorObj )
+    AJAX_RESPONSE_ERROR: "searched.error", // promise callback: asyncTaskDone( errorObj )
     AJAX_ABORT_BUTTON_CLICK: "canceled" // user action: buttonClick( event )
   },
   searched: {
