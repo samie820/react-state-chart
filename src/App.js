@@ -6,13 +6,18 @@ import {
   getState,
   subscribe
 } from "./setup_transition_function.js";
+import './App.css';
 
 const asyncFetchAction = (Component, action) => {
   const CancelToken = axios.CancelToken;
 
   return (dispatch, getState, actionGuard, actionType) => {
     const source = CancelToken.source();
-    let promise = null;
+    const storeDispatch = function(dataOrError) {
+      setTimeout(() => {
+        dispatch(action);
+      }, 0);
+    };
 
     action.type = actionType;
 
@@ -21,21 +26,23 @@ const asyncFetchAction = (Component, action) => {
     });
 
     if (actionGuard(action)) {
-      promise = axios
-        .get("https://example.com?query=" + action.text, {
+      return axios
+        .get("https://jsonplaceholder.typicode.com/" + action.text, {
           cancelToken: source.token
         })
         .then(data => {
-          action.data = ["number-1", "number-2", "number-3"];
-          dispatch(action);
+          action.data = data.data instanceof Array ? data.data : JSON.parse(data); // ["number-1", "number-2", "number-3"];
+          Component.asyncTaskDone();
+          return action
         })
+        .then(storeDispatch)
         .catch(thrownError => {
-          action.data = [];
-          dispatch(action);
-        });
+          action.type = "";
+          throw Component.asyncTaskDone(thrownError);
+        })
+        .catch(storeDispatch);
     }
 
-    return promise;
   };
 };
 
@@ -51,7 +58,7 @@ class App extends Component {
     };
   }
 
-  buttonClick = (event) => {
+  buttonClick = event => {
     const _behavior = transitionFunction(
       event.target.name === "search"
         ? "QUERY_BUTTON_CLICK"
@@ -59,7 +66,7 @@ class App extends Component {
       this.state,
       event.target.name === "search"
         ? asyncFetchAction(this, {
-            text: event.target.form.elements["query"].value,
+            text: event.target.form.elements["query"].value
           })
         : null
     );
@@ -69,6 +76,19 @@ class App extends Component {
     }
 
     this.updateUI(_behavior); // update UI to show "loading"
+  };
+
+  asyncTaskDone = (thrownError) => {
+    const _behavior = transitionFunction(
+      thrownError ? "AJAX_RESPONSE_ERROR" : "AJAX_RESPONSE_SUCCESS",
+      this.state,
+      null,
+      thrownError
+    );
+
+    this.updateUI(_behavior); // update UI to show "sucess/error"
+
+    return thrownError ? thrownError : true;
   }
 
   runCancelTokenCallback(msg) {
@@ -81,9 +101,9 @@ class App extends Component {
     this.requestCancelCallback = callback;
   }
 
-  updateUI = (stateObject) => {
+  updateUI = stateObject => {
     return updateAppBehavior(this, stateObject); // this call always calls `render()` cos `setState()` gets called
-  }
+  };
 
   hasScreenData = () => {
     const _behavior = transitionFunction(
@@ -94,13 +114,11 @@ class App extends Component {
     );
 
     this.updateUI(_behavior);
-  }
+  };
 
   renderInput(p, s) {
     if (s.parallel.form === "loading") {
-      return (
-        <input type="text" name="query" readonly="readonly" />
-      );
+      return <input type="text" name="query" readOnly="readOnly" />;
     }
     return <input type="text" name="query" />;
   }
@@ -146,9 +164,10 @@ class App extends Component {
   renderList(p) {
     return (
       <ul>
-        {p.search_items.map((item) =>
-        <li>{item}</li>
-        )};
+        {p.search_items.map(item => (
+          <li>{item.title} <strong>{item.completed ? "😉" : "😑"}</strong></li>
+        ))}
+        ;
       </ul>
     );
   }

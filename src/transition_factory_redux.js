@@ -13,13 +13,13 @@ const transitionFunctionFactory = (
 
   let transitionSet = transitionGraph[behaviourState.current];
   let newBehaviourState = transitionSet[eventName];
-  let transitionRule = transitionRuleSet[newBehaviourState.current];
-
+  
   // state-charts have guards and we need to execute that
   if (!newBehaviourState) {
     throw new Error("Action call on current state invalid");
   }
-
+  
+  let transitionRule = transitionRuleSet[newBehaviourState.current];
   let subState = null;
   let _parallelState = null;
   let _nextState = newBehaviourState.current || newBehaviourState;

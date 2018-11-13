@@ -30,3 +30,13 @@
     transform: rotate(360deg);
   }
 }
+
+li{
+  text-decoration: none;
+  padding: 5px;
+}
+
+li > strong{
+  font-size: 25px;
+  color: saddlebrown;
+}
