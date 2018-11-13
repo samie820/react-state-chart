@@ -7,7 +7,7 @@ const transitionFunctionFactory = (
   initialState
 ) => (eventName, behaviourState, action) => {
   // checking if argument passed is "null" or "undefined" and setting a default
-  if (behaviourState == void 0) {
+  if (behaviourState === void 0) {
     behaviourState = initialState;
   }
 
@@ -23,7 +23,7 @@ const transitionFunctionFactory = (
   let subState = null;
   let _parallelState = null;
   let _nextState = newBehaviourState.current || newBehaviourState;
-  let nextTransitionSet = transitionGraph[_nextState];
+  // let nextTransitionSet = transitionGraph[_nextState];
 
   if (_nextState.indexOf(".") + 1) {
     let hierachies = _nextState.split(".");

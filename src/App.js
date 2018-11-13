@@ -92,7 +92,7 @@ class App extends Component {
   }
 
   runCancelTokenCallback(msg) {
-    if (typeof this.requestCancelCallback == "function") {
+    if (typeof this.requestCancelCallback === "function") {
       this.requestCancelCallback(msg);
     }
   }
@@ -165,7 +165,7 @@ class App extends Component {
     return (
       <ul>
         {p.search_items.map(item => (
-          <li>{item.title} <strong>{item.completed ? "😉" : "😑"}</strong></li>
+          <li key={item.id}>{item.title} <strong>{item.completed ? "😉" : "😑"}</strong></li>
         ))}
         ;
       </ul>
