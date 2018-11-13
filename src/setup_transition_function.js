@@ -15,7 +15,7 @@ const loggerMiddleware = ({ getState }) => next => action => {
   console.log("NEXT: ", getState());
 };
 
-// create the [ actionDispatcher ] - redux store { no middlewares - for now }
+// create the [ actionDispatcher ] - redux store
 const store = createStore(
   (state, action) => {
     switch (action.type) {
