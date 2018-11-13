@@ -5,7 +5,7 @@ const transitionFunctionFactory = (
   transitionGraph,
   transitionRuleSet,
   initialState
-) => (eventName, behaviourState, action) => {
+) => (eventName, behaviourState, action, { message : message } = {message: null}) => {
   // checking if argument passed is "null" or "undefined" and setting a default
   if (behaviourState === void 0) {
     behaviourState = initialState;
@@ -20,7 +20,7 @@ const transitionFunctionFactory = (
   }
   
   let transitionRule = transitionRuleSet[newBehaviourState.current];
-  let subState = null;
+  let _subState = null;
   let _parallelState = null;
   let _nextState = newBehaviourState.current || newBehaviourState;
   // let nextTransitionSet = transitionGraph[_nextState];
@@ -28,7 +28,7 @@ const transitionFunctionFactory = (
   if (_nextState.indexOf(".") + 1) {
     let hierachies = _nextState.split(".");
     _nextState = hierachies.shift();
-    subState = hierachies.shift();
+    _subState = hierachies.shift();
   }
 
   if (newBehaviourState.parallel) {
@@ -56,11 +56,16 @@ const transitionFunctionFactory = (
     actionDispatcher(newAction);
   }
 
-  return {
-    current: _nextState,
-    sub: subState,
-    parallel: _parallelState
-  };
+  const _behavior = {
+	          current:_nextState,
+	          sub:_subState,
+	          parallel:_parallelState,
+		  error:message
+        };
+	
+	console.log("CURRENT STATE-CHART VALUES: ", _behavior);
+	
+	return _behavior;
 };
 
 const updateAppBehavior = (context, behavior) => {
