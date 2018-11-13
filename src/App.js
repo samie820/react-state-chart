@@ -162,18 +162,20 @@ class App extends Component {
 
   renderList(p, s) {
     return (
-      p.search_items.length 
-			? <ul>
-        {(p.search_items.map(item => (
-          <li key={item.id}>{item.title} <strong>{item.completed ? "😉" : "😑"}</strong></li>
+      p.search_items.length > 0
+	? <ul>
+       	 {(p.search_items.map(item => (
+            <li key={item.id}>{item.title} 
+	    	<strong>{item.completed ? "😉" : "😑"}</strong>
+	    </li>
         ))}
       </ul>
-      : <p>No data yet!</p> ;
+      : <p>No data yet!</p>
     );
   }
 
   renderErrorMessage(p, s){
-	    
+	  
     	let message = `Error Loading Search Results: ${s.error}`;
 	    
     	return (
@@ -195,9 +197,9 @@ class App extends Component {
   }
 
   renderResult(p, s) {
-    return s.parallel.form === "loading"
+    return (s.parallel.form === "loading"
       ? this.renderLoadingMessage(p, s)
-      : s.sub == 'error' ? this.renderErrorMessage(p, s) : this.renderList(p, s) 
+      : s.sub == 'error' ? this.renderErrorMessage(p, s) : this.renderList(p, s));
   }
 
   render() {
