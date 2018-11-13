@@ -109,11 +109,10 @@ class App extends Component {
     const _behavior = transitionFunction(
       "RENDER_START",
       this.state,
-      null,
       null
     );
 
-    this.updateUI(_behavior);
+    this.updateUI(_behavior); // update UI to show ...
   };
 
   renderInput(p, s) {
@@ -134,7 +133,7 @@ class App extends Component {
         Searching...
       </button>
     ) : (
-      <button type="button" name="search" onClick={this.buttonClick.bind(this)}>
+      <button type="button" name="search" onClick={this.buttonClick}>
         Search
       </button>
     );
@@ -151,39 +150,54 @@ class App extends Component {
         Cancel
       </button>
     ) : s.current === "canceled" ? (
-      <button type="button" name="cancel" onClick={this.buttonClick.bind(this)}>
+      <button type="button" name="cancel" onClick={this.buttonClick}>
         Canceling...
       </button>
     ) : (
-      <button type="button" name="cancel" onClick={this.buttonClick.bind(this)}>
+      <button type="button" name="cancel" onClick={this.buttonClick}>
         Cancel
       </button>
     );
   }
 
-  renderList(p) {
+  renderList(p, s) {
     return (
-      <ul>
-        {p.search_items.map(item => (
+      p.search_items.length 
+			? <ul>
+        {(p.search_items.map(item => (
           <li key={item.id}>{item.title} <strong>{item.completed ? "😉" : "😑"}</strong></li>
         ))}
-        ;
       </ul>
+      : <p>No data yet!</p> ;
     );
   }
 
-  renderLoadingMessage() {
-    return (
-      <p>
-        <span>Loading Search Results...</span>
-      </p>
-    );
+  renderErrorMessage(p, s){
+	    
+    	let message = `Error Loading Search Results: ${s.error}`;
+	    
+    	return (
+        <p>
+          <span>{message}</span>
+        </p>
+      );
+  }
+	
+  renderLoadingMessage(p, s){
+	    
+    	let message = `Loading Search Results...`;
+	    
+    	return (
+        <p>
+          <span>{message}</span>
+        </p>
+      );
   }
 
   renderResult(p, s) {
     return s.parallel.form === "loading"
-      ? this.renderLoadingMessage()
-      : this.renderList(p);
+      ? this.renderLoadingMessage(p, s)
+      : s.sub == 'error' ? this.renderErrorMessage(p, s) : this.renderList(p, s) 
   }
 
   render() {
