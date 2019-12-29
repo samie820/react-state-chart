@@ -15,7 +15,7 @@ const loggerMiddleware = ({ getState }) => next => action => {
   console.log("NEXT: ", getState());
 };
 
-// create the [ actionDispatcher ] - redux store { no middlewares - for now }
+// create the [ actionDispatcher ] - redux store
 const store = createStore(
   (state, action) => {
     switch (action.type) {
@@ -44,24 +44,24 @@ const store = createStore(
 const statechart_transition_graph = {
   idle: {
     QUERY_BUTTON_CLICK: {
-      current: "searching", // buttonClick( event )
+      current: "searching", // user action: buttonClick( event )
       parallel: { form: "loading" } //
     }
   },
   searching: {
-    AJAX_RESPONSE_SUCCESS: "searched.success", // promise callback: makeActionAndDispatch(new_state , data )
-    AJAX_RESPONSE_ERROR: "searched.error", // promise callback: makeActionAndDispatch(new_state , data )
-    AJAX_ABORT_BUTTON_CLICK: "canceled" // promise callback: makeActionAndDispatch(new_state , data )
+    AJAX_RESPONSE_SUCCESS: "searched.success", // promise callback: asyncTaskDone( errorObj )
+    AJAX_RESPONSE_ERROR: "searched.error", // promise callback: asyncTaskDone( errorObj )
+    AJAX_ABORT_BUTTON_CLICK: "canceled" // user action: buttonClick( event )
   },
   searched: {
     RENDER_START: {
-      current: "idle", // hasScreenData( void )
+      current: "idle", // render ui: hasScreenData( void )
       parallel: { form: "ready" } //
     }
   },
   canceled: {
     RENDER_START: {
-      current: "idle", // hasScreenData( void )
+      current: "idle", // render ui: hasScreenData( void )
       parallel: { form: "ready" } //
     }
   },
@@ -100,7 +100,7 @@ const transitionFunction = transitionFunctionFactory(
   dispatch,
   statechart_transition_graph,
   statechart_transition_ruleset,
-  { current: "idle", sub: null, parallel: { form: "ready" } }
+  { current: "idle", sub: null, parallel: { form: "ready" }, error:null }
 );
 
 export { transitionFunction, subscribe, getState };
